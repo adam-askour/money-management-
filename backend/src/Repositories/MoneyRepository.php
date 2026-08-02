@@ -1,0 +1,15 @@
+<?php
+declare(strict_types=1);
+namespace App\Repositories;
+use PDO;
+final class MoneyRepository {
+ public function __construct(private readonly PDO $db){}
+ public function user(int $id):array{$s=$this->db->prepare('SELECT id,name FROM users WHERE id=:id AND is_active=1');$s->execute(['id'=>$id]);return$s->fetch()?:throw new \RuntimeException('Configured user is unavailable.');}
+ public function budget(int $userId,string $date):int{$s=$this->db->prepare('SELECT daily_budget_centimes FROM budgets WHERE user_id=:uid AND effective_from<=:d1 AND (effective_to IS NULL OR effective_to>=:d2) ORDER BY effective_from DESC LIMIT 1');$s->execute(['uid'=>$userId,'d1'=>$date,'d2'=>$date]);$v=$s->fetchColumn();return$v===false?4000:(int)$v;}
+ public function monthExpenses(int $userId,string $start,string $end):array{$s=$this->db->prepare('SELECT id,expense_date,description,amount_centimes,created_at,updated_at FROM expenses WHERE user_id=:uid AND expense_date BETWEEN :start AND :end ORDER BY expense_date,id');$s->execute(['uid'=>$userId,'start'=>$start,'end'=>$end]);return$s->fetchAll();}
+ public function dayExpenses(int $userId,string $date):array{$s=$this->db->prepare('SELECT id,expense_date,description,amount_centimes,created_at,updated_at FROM expenses WHERE user_id=:uid AND expense_date=:date ORDER BY id');$s->execute(['uid'=>$userId,'date'=>$date]);return$s->fetchAll();}
+ public function findOwned(int $id,int $userId):?array{$s=$this->db->prepare('SELECT id,user_id,expense_date,description,amount_centimes FROM expenses WHERE id=:id AND user_id=:uid');$s->execute(['id'=>$id,'uid'=>$userId]);return$s->fetch()?:null;}
+ public function create(int $userId,string $date,string $description,int $amount,string $key):int{$s=$this->db->prepare('INSERT INTO expenses(user_id,expense_date,description,amount_centimes,idempotency_key) VALUES(:uid,:date,:description,:amount,:ikey)');$s->execute(['uid'=>$userId,'date'=>$date,'description'=>$description,'amount'=>$amount,'ikey'=>$key]);return(int)$this->db->lastInsertId();}
+ public function update(int $id,int $userId,string $description,int $amount):void{$s=$this->db->prepare('UPDATE expenses SET description=:description,amount_centimes=:amount WHERE id=:id AND user_id=:uid');$s->execute(['description'=>$description,'amount'=>$amount,'id'=>$id,'uid'=>$userId]);if($s->rowCount()===0&&!$this->findOwned($id,$userId))throw new \DomainException('Expense not found.');}
+ public function delete(int $id,int $userId):void{$s=$this->db->prepare('DELETE FROM expenses WHERE id=:id AND user_id=:uid');$s->execute(['id'=>$id,'uid'=>$userId]);if($s->rowCount()===0)throw new \DomainException('Expense not found.');}
+}

@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+backend/.env
+backend/storage/*.log
+backend/vendor/
+coverage/
+vite-output.log
+vite-error.log
+.phpunit.cache/
