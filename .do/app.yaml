@@ -1,0 +1,86 @@
+name: daily-dh
+region: fra
+envs:
+  - key: APP_ENV
+    scope: RUN_TIME
+    value: production
+  - key: APP_DEBUG
+    scope: RUN_TIME
+    value: "false"
+  - key: APP_ORIGIN
+    scope: RUN_TIME
+    value: ${APP_URL}
+  - key: APP_ORIGINS
+    scope: RUN_TIME
+    value: ${APP_URL}
+  - key: APP_TIMEZONE
+    scope: RUN_TIME
+    value: Africa/Casablanca
+  - key: APP_SESSION_NAME
+    scope: RUN_TIME
+    value: daily_dh_session
+  - key: TRUST_PROXY_HEADERS
+    scope: RUN_TIME
+    value: "true"
+  - key: DB_SSL_REQUIRED
+    scope: RUN_TIME
+    value: "true"
+  - key: DB_SSL_CA_CERT
+    scope: RUN_TIME
+    value: ${daily-db.CA_CERT}
+    type: SECRET
+  - key: DB_HOST
+    scope: RUN_TIME
+    value: ${daily-db.HOSTNAME}
+  - key: DB_PORT
+    scope: RUN_TIME
+    value: ${daily-db.PORT}
+  - key: DB_DATABASE
+    scope: RUN_TIME
+    value: ${daily-db.DATABASE}
+  - key: DB_USERNAME
+    scope: RUN_TIME
+    value: ${daily-db.USERNAME}
+  - key: DB_PASSWORD
+    scope: RUN_TIME
+    value: ${daily-db.PASSWORD}
+    type: SECRET
+  - key: RATE_LIMIT_SECRET
+    scope: RUN_TIME
+    type: SECRET
+    value: REPLACE_WITH_64_RANDOM_HEX_CHARACTERS
+services:
+  - name: web
+    github:
+      repo: adam-askour/money-management-
+      branch: main
+      deploy_on_push: true
+    dockerfile_path: Dockerfile
+    http_port: 8080
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    health_check:
+      http_path: /api/health
+      initial_delay_seconds: 20
+      period_seconds: 15
+      timeout_seconds: 5
+      success_threshold: 1
+      failure_threshold: 5
+    routes:
+      - path: /
+jobs:
+  - name: migrate
+    kind: PRE_DEPLOY
+    github:
+      repo: adam-askour/money-management-
+      branch: main
+    dockerfile_path: Dockerfile
+    run_command: php backend/bin/migrate.php
+    instance_size_slug: basic-xxs
+databases:
+  - name: daily-db
+    engine: MYSQL
+    version: "8"
+    production: false
+    db_name: adam_money
+    db_user: adam_money_app

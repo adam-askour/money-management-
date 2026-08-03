@@ -1,0 +1,13 @@
+.git
+.github
+.agents
+.codex
+node_modules
+dist
+coverage
+backend/.env
+backend/vendor
+backend/storage
+*.log
+.chrome-*
+.edge-*

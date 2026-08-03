@@ -1,6 +1,6 @@
 # Daily DH
 
-Daily DH is Adam's private, one-page expense ledger for August 2026. It records any number of custom expenses per day, performs every money calculation in integer centimes, enforces server-time edit windows, and presents the month as a responsive poster-inspired financial dashboard.
+Daily DH is an invite-only private expense ledger for up to 50 users. It records any number of custom expenses per day, performs every money calculation in integer centimes, enforces server-time edit windows, and presents the month as a responsive poster-inspired financial dashboard.
 
 ## Features
 
@@ -8,7 +8,7 @@ Daily DH is Adam's private, one-page expense ledger for August 2026. It records 
 - Custom expense names and multiple expenses per day; no fixed categories
 - Automatic daily totals, saved/on-target/over-target states, and full monthly statistics
 - Empty days remain "No expenses recorded" and are never silently counted as zero-spend days
-- Today editable; yesterday editable only before 09:00; older and future days locked using the backend's Europe/Amsterdam clock
+- Today editable; yesterday editable only before 09:00; older and future days locked using the backend's Africa/Casablanca clock
 - Responsive ledger, accessible slide-over details, keyboard focus, visible labels, reduced-motion mode, and non-color status cues
 - CSRF protection, ownership-scoped queries, CORS allow-list, strict JSON validation, request limiting, idempotent creates, and security headers
 
@@ -48,13 +48,19 @@ Expenses store `user_id` directly because an expense day has no independent attr
 Requirements: Node.js 20+, PHP 8.2+ with PDO MySQL and mbstring, Composer 2, and MySQL 8+.
 
 1. Copy `.env.example` to `.env`, and `backend/.env.example` to `backend/.env`.
-2. Create a least-privilege MySQL application user, update `backend/.env`, and import `backend/database/schema.sql`. The schema seeds Adam and a 40 DH effective-dated daily budget.
+2. Create a least-privilege MySQL application user, update `backend/.env`, import `backend/database/schema.sql`, then apply `backend/database/migration_002_auth_budgets.sql`.
 3. Run `npm install` in the project root.
 4. Run `composer install` in `backend`.
 5. Start the API with `php -S localhost:8080 backend/router.php` from the project root.
 6. In another terminal run `npm run dev`, then open the printed local URL.
 
 The Vite development proxy forwards `/api` to PHP. For production, serve the built static files and `/api` on the expected origin, or set `VITE_API_BASE_URL` before building. Set `APP_ENV=production`, use HTTPS, a strong database password, and the exact public `APP_ORIGIN`.
+
+## DigitalOcean deployment
+
+The repository includes a production multi-stage `Dockerfile`, Apache/PHP configuration, a pre-deploy migration command, and `.do/app.yaml`. DigitalOcean builds the React client, installs production PHP dependencies, provisions a MySQL development database for initial public testing, runs `php backend/bin/migrate.php`, and checks `/api/health`.
+
+Before creating the app, replace `REPLACE_WITH_64_RANDOM_HEX_CHARACTERS` in `.do/app.yaml` with a cryptographically random secret. The pre-deploy log prints a single `ADMIN_ACTIVATION_URL` on a new database. Treat that link as a password. Upgrade the development database to a managed production database with backups before storing real user financial data or inviting other people.
 
 ## Build and tests
 

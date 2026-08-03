@@ -1,0 +1,21 @@
+<?php
+declare(strict_types=1);
+namespace App\Repositories;
+
+use PDO;
+
+final class AuthRepository {
+ public function __construct(private readonly PDO $db){}
+ public function findByEmail(string $email):?array{$s=$this->db->prepare('SELECT id,name,email,password_hash,role,is_active FROM users WHERE email=:email LIMIT 1');$s->execute(['email'=>$email]);return$s->fetch()?:null;}
+ public function findActive(int $id):?array{$s=$this->db->prepare('SELECT id,name,email,role FROM users WHERE id=:id AND is_active=1 AND password_hash IS NOT NULL');$s->execute(['id'=>$id]);return$s->fetch()?:null;}
+ public function countUsers():int{return(int)$this->db->query('SELECT COUNT(*) FROM users')->fetchColumn();}
+ public function touchLogin(int $id):void{$s=$this->db->prepare('UPDATE users SET last_login_at=NOW() WHERE id=:id');$s->execute(['id'=>$id]);}
+ public function invitation(string $tokenHash):?array{$s=$this->db->prepare('SELECT i.*,u.id AS existing_user_id FROM invitations i LEFT JOIN users u ON u.email=i.email WHERE i.token_hash=:hash AND i.accepted_at IS NULL AND i.revoked_at IS NULL AND i.expires_at>NOW() LIMIT 1');$s->execute(['hash'=>$tokenHash]);return$s->fetch()?:null;}
+ public function createInvitation(string $name,string $email,string $hash,int $adminId,string $expires):int{$s=$this->db->prepare("INSERT INTO invitations(name,email,token_hash,role,invited_by,expires_at) VALUES(:name,:email,:hash,'member',:admin,:expires)");$s->execute(['name'=>$name,'email'=>$email,'hash'=>$hash,'admin'=>$adminId,'expires'=>$expires]);return(int)$this->db->lastInsertId();}
+ public function acceptInvitation(array $invite,string $passwordHash):int{$this->db->beginTransaction();try{$existing=$invite['existing_user_id']?(int)$invite['existing_user_id']:null;if($existing){$s=$this->db->prepare('UPDATE users SET name=:name,password_hash=:password,role=:role,is_active=1 WHERE id=:id AND password_hash IS NULL');$s->execute(['name'=>$invite['name'],'password'=>$passwordHash,'role'=>$invite['role'],'id'=>$existing]);if($s->rowCount()!==1)throw new \DomainException('This account has already been activated.');$userId=$existing;}else{$locked=$this->db->query('SELECT id FROM users FOR UPDATE')->fetchAll();if(count($locked)>=50)throw new \DomainException('The 50-user account limit has been reached.');$s=$this->db->prepare('INSERT INTO users(name,email,password_hash,role,is_active) VALUES(:name,:email,:password,:role,1)');$s->execute(['name'=>$invite['name'],'email'=>$invite['email'],'password'=>$passwordHash,'role'=>$invite['role']]);$userId=(int)$this->db->lastInsertId();$b=$this->db->prepare('INSERT INTO budgets(user_id,daily_budget_centimes,monthly_budget_centimes,effective_from) VALUES(:uid,4000,124000,CURDATE())');$b->execute(['uid'=>$userId]);}$u=$this->db->prepare('UPDATE invitations SET accepted_at=NOW() WHERE id=:id AND accepted_at IS NULL');$u->execute(['id'=>$invite['id']]);$this->db->commit();return$userId;}catch(\Throwable $e){$this->db->rollBack();throw$e;}}
+ public function invitations():array{return$this->db->query("SELECT i.id,i.name,i.email,i.expires_at,i.accepted_at,i.revoked_at,i.created_at,u.name AS invited_by_name FROM invitations i LEFT JOIN users u ON u.id=i.invited_by ORDER BY i.created_at DESC LIMIT 100")->fetchAll();}
+ public function revokeInvitation(int $id):bool{$s=$this->db->prepare('UPDATE invitations SET revoked_at=NOW() WHERE id=:id AND accepted_at IS NULL AND revoked_at IS NULL');$s->execute(['id'=>$id]);return$s->rowCount()===1;}
+ public function users():array{return$this->db->query('SELECT id,name,email,role,is_active,created_at,last_login_at FROM users ORDER BY created_at,id')->fetchAll();}
+ public function setActive(int $id,bool $active,int $adminId):bool{if($id===$adminId&&!$active)throw new \DomainException('You cannot disable your own account.');$s=$this->db->prepare('UPDATE users SET is_active=:active WHERE id=:id');$s->execute(['active'=>$active?1:0,'id'=>$id]);return$s->rowCount()===1;}
+ public function event(?int $userId,string $type,string $ipHash,array $metadata=[]):void{$s=$this->db->prepare('INSERT INTO security_events(user_id,event_type,ip_hash,metadata_json) VALUES(:uid,:type,:ip,:meta)');$s->execute(['uid'=>$userId,'type'=>$type,'ip'=>$ipHash,'meta'=>$metadata?json_encode($metadata,JSON_THROW_ON_ERROR):null]);}
+}

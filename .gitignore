@@ -3,8 +3,16 @@ dist/
 .env
 backend/.env
 backend/storage/*.log
+backend/storage/*.ini
+backend/storage/mysql-data/
+backend/storage/sess_*
+backend/storage/*-recovery.sql
 backend/vendor/
 coverage/
 vite-output.log
 vite-error.log
+.chrome-*/
+.edge-*/
+*-diagnostic.png
+chrome-runtime.log
 .phpunit.cache/

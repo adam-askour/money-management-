@@ -1,0 +1,10 @@
+import { Save, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { api } from '../services/api';
+
+export function BudgetEditor({ data, month, onClose, onSaved }) {
+ const [form,setForm]=useState({dailyBudget:'',monthlyBudget:'',effectiveFrom:`${month}-01`}),[errors,setErrors]=useState({}),[busy,setBusy]=useState(false);
+ useEffect(()=>setForm({dailyBudget:(data.budget.dailyBudgetCentimes/100).toFixed(2),monthlyBudget:(data.budget.monthlyBudgetCentimes/100).toFixed(2),effectiveFrom:`${month}-01`}),[data,month]);
+ const submit=async e=>{e.preventDefault();setBusy(true);setErrors({});try{await api.updateBudget(form);await onSaved();onClose();}catch(err){setErrors(err.fields||{form:err.message});}finally{setBusy(false);}};
+ return <div className="modal-layer"><button className="scrim" aria-label="Close" onClick={onClose}/><section className="settings-modal" role="dialog" aria-modal="true" aria-labelledby="budget-title"><header><div><span className="eyebrow">Personal targets</span><h2 id="budget-title">Edit your budget</h2></div><button className="icon-btn" onClick={onClose}><X/></button></header><p>Changes start on the effective date, so older budget history stays accurate.</p><form className="auth-form" onSubmit={submit}><label>Daily target (DH)<input inputMode="decimal" value={form.dailyBudget} onChange={e=>setForm({...form,dailyBudget:e.target.value})}/></label>{errors.dailyBudget&&<span className="field-error">{errors.dailyBudget}</span>}<label>Monthly budget (DH)<input inputMode="decimal" value={form.monthlyBudget} onChange={e=>setForm({...form,monthlyBudget:e.target.value})}/></label>{errors.monthlyBudget&&<span className="field-error">{errors.monthlyBudget}</span>}<label>Effective from<input type="date" value={form.effectiveFrom} onChange={e=>setForm({...form,effectiveFrom:e.target.value})}/></label>{errors.effectiveFrom&&<span className="field-error">{errors.effectiveFrom}</span>}{errors.form&&<span className="field-error">{errors.form}</span>}<button className="primary-btn" disabled={busy}><Save size={17}/>{busy?'Saving…':'Save targets'}</button></form></section></div>;
+}
