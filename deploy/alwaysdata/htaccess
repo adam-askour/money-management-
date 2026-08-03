@@ -2,6 +2,7 @@ Options -Indexes
 DirectoryIndex index.php
 
 RewriteEngine On
+RewriteRule ^(?:backend|deploy|public)(?:/|$) - [F,L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [QSA,L]
