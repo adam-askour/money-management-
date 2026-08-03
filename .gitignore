@@ -16,3 +16,4 @@ vite-error.log
 *-diagnostic.png
 chrome-runtime.log
 .phpunit.cache/
+.deploy-secrets/

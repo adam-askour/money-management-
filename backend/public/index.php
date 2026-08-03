@@ -19,6 +19,7 @@ use App\Validation\ExpenseValidator;
 
 $autoload=dirname(__DIR__).'/vendor/autoload.php';require is_file($autoload)?$autoload:dirname(__DIR__).'/autoload.php';
 Env::load(dirname(__DIR__).'/.env');
+if(Env::get('APP_ENV','development')==='production'){ini_set('display_errors','0');ini_set('log_errors','1');}
 
 $allowedOrigins=array_values(array_filter(array_map('trim',explode(',',Env::get('APP_ORIGINS',Env::get('APP_ORIGIN','http://localhost:5173'))))));
 $origin=$_SERVER['HTTP_ORIGIN']??'';
@@ -37,7 +38,7 @@ if(isset($_SESSION['created_at'])&&($now-(int)$_SESSION['created_at'])>43200||is
 $_SESSION['created_at']??=$now;$_SESSION['last_seen']=$now;
 
 $db=Connection::create();$authRepo=new AuthRepository($db);$auth=new AuthService($authRepo,50);
-$ip=ClientIp::detect(Env::get('TRUST_PROXY_HEADERS','false')==='true');$secret=Env::get('RATE_LIMIT_SECRET',Env::get('DB_PASSWORD'));
+$ip=ClientIp::detect(Env::get('TRUST_PROXY_HEADERS','false')==='true');$secret=Env::get('RATE_LIMIT_SECRET',Env::get('DB_PASSWORD','development-rate-limit-secret'));
 $ipHash=hash_hmac('sha256',$ip,$secret);$limiter=new RateLimiter($db,$secret);
 $general=$limiter->hit('general',$ip,240,60,60);if(!$general['allowed']){header('Retry-After: '.$general['retryAfter']);JsonResponse::error('Too many requests. Please wait and try again.',429);}
 
