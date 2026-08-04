@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="15" fill="#071c38"/>
+  <path d="M15 20.5h31a6 6 0 0 1 6 6v21a6 6 0 0 1-6 6H15a6 6 0 0 1-6-6v-27h6Z" fill="#0b2850" stroke="#59a8ff" stroke-width="3"/>
+  <path d="M12 20.5v-3a7 7 0 0 1 7-7h27v10H12Z" fill="#123d73" stroke="#faae33" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M39 30h15v13H39a6.5 6.5 0 0 1 0-13Z" fill="#faae33"/>
+  <circle cx="41" cy="36.5" r="2.3" fill="#071c38"/>
+  <text x="16" y="45" fill="#f5f1e8" font-family="Arial, sans-serif" font-size="14" font-weight="700">DH</text>
+</svg>
