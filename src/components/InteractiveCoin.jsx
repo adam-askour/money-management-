@@ -25,15 +25,15 @@ export function InteractiveCoin() {
   };
 
   return <div className="coin-stage" onPointerMove={move} onPointerLeave={reset}>
-    <div className="coin-3d" ref={coin} aria-label="Rotating interactive Moroccan 2 dirham coin">
+    <div className="coin-3d" ref={coin} aria-label="Rotating interactive Daily DH 5 dirham coin">
       <div className="coin-spinner">
         <div className="coin-edge" aria-hidden="true" />
         <div className="coin-face">
-          <img src="/assets/moroccan-2-dirham-coin.png" alt="Moroccan 2 dirham coin" draggable="false" />
+          <img src="/assets/daily-dh-5-coin.png" alt="Original Daily DH 5 dirham coin design" draggable="false" />
           <span className="coin-shine" aria-hidden="true" />
         </div>
         <div className="coin-back" aria-hidden="true">
-          <img src="/assets/moroccan-2-dirham-coin.png" alt="" draggable="false" />
+          <img src="/assets/daily-dh-5-coin.png" alt="" draggable="false" />
           <span className="coin-shine" />
         </div>
       </div>

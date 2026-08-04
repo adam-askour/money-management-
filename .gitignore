@@ -17,3 +17,5 @@ vite-error.log
 chrome-runtime.log
 .phpunit.cache/
 .deploy-secrets/
+coin-preview.png
+coin-5dh-preview.png

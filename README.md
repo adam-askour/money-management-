@@ -4,7 +4,7 @@ Daily DH is an invite-only private expense ledger for up to 50 users. It records
 
 ## Features
 
-- All 31 days of August 2026, with support for any future `YYYY-MM` month through the API
+- A dynamic month selector and calendar-aware dashboard for current and future `YYYY-MM` months
 - Custom expense names and multiple expenses per day; no fixed categories
 - Automatic daily totals, saved/on-target/over-target states, and full monthly statistics
 - Empty days remain "No expenses recorded" and are never silently counted as zero-spend days
@@ -41,7 +41,7 @@ backend/
   tests/             controllable-clock and validation tests
 ```
 
-Expenses store `user_id` directly because an expense day has no independent attributes in this version; avoiding an empty join table keeps reads and authorization simpler. Effective-dated budgets support future changes without rewriting historical data. The temporary single-user boundary is the server-side `SINGLE_USER_ID`; the client never supplies ownership. Replace that value with an authenticated session user ID when accounts are introduced.
+Expenses store `user_id` directly because an expense day has no independent attributes; avoiding an empty join table keeps reads and authorization simpler. Effective-dated budgets support future changes without rewriting historical data. Every ledger query and mutation is scoped to the authenticated session user, and administrative actions require the server-side admin role.
 
 ## Local setup
 
@@ -61,6 +61,18 @@ The Vite development proxy forwards `/api` to PHP. For production, serve the bui
 The repository includes a production multi-stage `Dockerfile`, Apache/PHP configuration, a pre-deploy migration command, and `.do/app.yaml`. DigitalOcean builds the React client, installs production PHP dependencies, provisions a MySQL development database for initial public testing, runs `php backend/bin/migrate.php`, and checks `/api/health`.
 
 Before creating the app, replace `REPLACE_WITH_64_RANDOM_HEX_CHARACTERS` in `.do/app.yaml` with a cryptographically random secret. The pre-deploy log prints a single `ADMIN_ACTIVATION_URL` on a new database. Treat that link as a password. Upgrade the development database to a managed production database with backups before storing real user financial data or inviting other people.
+
+## Alwaysdata deployment
+
+The `deploy/alwaysdata` directory contains a shared-hosting front controller, `.htaccess` template, and an interactive environment-file helper. The helper asks for the database password without echoing it and writes the production `.env` outside Git. Review the account names, origin, database host, and SSL settings before using it for another Alwaysdata account.
+
+## Public repository safety
+
+- Never commit `.env` files, deployment keys, database exports, invitation URLs, browser profiles, logs, or release archives.
+- Use placeholders in examples and store production secrets only in the hosting provider's secret store or the ignored server environment file.
+- Report vulnerabilities privately according to `SECURITY.md`.
+- Dependabot and GitHub Actions are configured to check frontend and backend changes.
+- The generated Daily DH coin artwork is an original project asset; no photograph of circulating currency is included.
 
 ## Build and tests
 
@@ -94,7 +106,6 @@ For a real multi-user release, add login with `password_hash()`/`password_verify
 
 ## Known limitations and future improvements
 
-- The first UI is intentionally fixed to August 2026; the API and schema are month-generic.
-- Authentication is not exposed yet; server-side single-user resolution is isolated for replacement.
 - Session rate limiting is suitable for this private version, not a distributed deployment.
-- Add database-backed integration tests, budget history editing, export, and authenticated accounts next.
+- Add database-backed integration tests, password recovery, budget history editing, and data export.
+- The public-cloud deployment uses one application instance and does not provide distributed sessions or rate limiting.
