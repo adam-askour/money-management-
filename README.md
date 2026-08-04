@@ -2,6 +2,8 @@
 
 Daily DH is an invite-only private expense ledger for up to 50 users. It records any number of custom expenses per day, performs every money calculation in integer centimes, enforces server-time edit windows, and presents the month as a responsive poster-inspired financial dashboard.
 
+> **Source available — All Rights Reserved.** This repository is public for inspection and educational review only. Copying, modification, redistribution, deployment, or commercial use is not permitted without written authorization. See `LICENSE`.
+
 ## Features
 
 - A dynamic month selector and calendar-aware dashboard for current and future `YYYY-MM` months
