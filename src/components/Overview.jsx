@@ -20,8 +20,8 @@ export function Overview({ summary, serverToday, monthName, userName }) {
     <motion.div className="orbit" initial={reduced ? false : { opacity: 0, scale: .88, rotate: -8 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ duration: .75, ease: [.19, 1, .22, 1] }}><InteractiveCoin /></motion.div>
     <div className="today-strip">
       <Stat icon={ReceiptText} label="Today" value={summary.today.recorded ? formatDH(summary.today.totalCentimes) : 'Not recorded'} />
-      <Stat icon={Target} label="Daily goal" value={formatDH(summary.dailyBudgetCentimes)} />
-      <Stat icon={Gauge} label="Difference" value={summary.today.recorded ? formatDH(summary.today.differenceCentimes, true) : '—'} tone={summary.today.state}/>
+      <Stat icon={Target} label="Daily goal" value={summary.dailyBudgetCentimes==null?'Not set':formatDH(summary.dailyBudgetCentimes)} />
+      <Stat icon={Gauge} label="Difference" value={summary.today.recorded&&summary.today.differenceCentimes!=null ? formatDH(summary.today.differenceCentimes, true) : '—'} tone={summary.today.state}/>
     </div>
     <motion.section className="budget-balance" aria-labelledby="budget-balance-title" initial={reduced ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
       <div className="budget-balance__intro">
@@ -37,8 +37,8 @@ export function Overview({ summary, serverToday, monthName, userName }) {
     </motion.section>
     <div className="stats-grid">
       <Stat icon={CalendarDays} label="Spent this month" value={formatDH(summary.totalSpentCentimes)} />
-      <Stat icon={Target} label="Monthly target" value={formatDH(summary.monthlyTargetCentimes)} />
-      <Stat icon={ArrowDownRight} label="Budget remaining" value={formatDH(summary.remainingCentimes)} />
+      <Stat icon={Target} label="Monthly target" value={summary.monthlyTargetCentimes==null?'Not set':formatDH(summary.monthlyTargetCentimes)} />
+      <Stat icon={ArrowDownRight} label="Budget remaining" value={summary.remainingCentimes==null?'Not set':formatDH(summary.remainingCentimes)} />
       <Stat icon={Gauge} label="Average / recorded day" value={formatDH(summary.averageRecordedCentimes)} />
     </div>
     <div className="count-row" aria-label="Monthly day counts">

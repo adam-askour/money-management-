@@ -1,6 +1,7 @@
 import { LoaderCircle, LockKeyhole, UserPlus, WalletCards } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { api } from '../services/api';
+import { LegalFooter } from './LegalCenter';
 
 export function LoginScreen({ onLogin }) {
   const [form,setForm]=useState({email:'',password:''}),[errors,setErrors]=useState({}),[busy,setBusy]=useState(false);
@@ -15,4 +16,4 @@ export function InviteScreen({ token, onAccepted }) {
   return <AuthFrame title={invite?`Hello, ${invite.name}.`:'Checking invitation…'} text={invite?`Create a password to activate ${invite.email}.`:'This will only take a moment.'}>{error?<div className="state-card error">{error}</div>:invite?<form className="auth-form" onSubmit={submit}><label>Create password<input type="password" autoComplete="new-password" maxLength="128" value={password} onChange={e=>setPassword(e.target.value)}/></label><small>At least 12 characters with uppercase, lowercase, and a number.</small><button className="primary-btn" disabled={busy}><UserPlus size={17}/>{busy?'Activating…':'Activate account'}</button></form>:<LoaderCircle className="spin"/>}</AuthFrame>;
 }
 
-function AuthFrame({title,text,children}){return <main className="auth-page"><section className="auth-card"><div className="auth-brand"><WalletCards/>DAILY DH</div><span className="eyebrow">Private · Invite only</span><h1>{title}</h1><p>{text}</p>{children}</section></main>;}
+function AuthFrame({title,text,children}){return <><main className="auth-page"><section className="auth-card"><div className="auth-brand"><WalletCards/>DAILY DH</div><span className="eyebrow">Private · Invite only</span><h1>{title}</h1><p>{text}</p>{children}</section></main><LegalFooter compact/></>;}
