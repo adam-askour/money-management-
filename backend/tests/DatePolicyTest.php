@@ -9,4 +9,5 @@ final class DatePolicyTest extends TestCase {
  public function testOlderDayLocked():void{$this->assertFalse($this->policy('2026-08-03 08:00')->state('2026-08-01')['editable']);}
  public function testFutureDayLocked():void{$this->assertSame('upcoming',$this->policy('2026-08-02 12:00')->state('2026-08-03')['state']);}
  public function testTodayEditable():void{$this->assertTrue($this->policy('2026-08-02 23:59')->state('2026-08-02')['editable']);}
+ public function testDayBeforeActivationIsLocked():void{$policy=new DatePolicy(new DateTimeZone('Europe/Amsterdam'),new DateTimeImmutable('2026-08-15 12:00',new DateTimeZone('Europe/Amsterdam')),[],'2026-08-15');$this->assertSame('before_activation',$policy->state('2026-08-14')['state']);}
 }

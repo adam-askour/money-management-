@@ -21,7 +21,7 @@ export function App() {
   const { data,loading,error,reload }=useMoneyData(month,Boolean(session.user));
   const notify=useCallback(message=>{setToast(message);setTimeout(()=>setToast(''),2800);},[]);
   useEffect(()=>{api.bootstrap().then(result=>setSession({loading:false,user:result.user})).catch(()=>setSession({loading:false,user:null}));},[]);
-  useEffect(()=>{if(data?.budget?.dailyBudgetCentimes==null)setBudgetOpen(true);},[data]);
+  useEffect(()=>{if(data?.budget?.needsMonthlyGoal)setBudgetOpen(true);},[data]);
   if(session.loading)return <LoadingState/>;
   const token=new URLSearchParams(location.search).get('token');
   if(!session.user&&token)return <InviteScreen token={token} onAccepted={user=>setSession({loading:false,user})}/>;

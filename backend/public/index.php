@@ -55,7 +55,7 @@ try{
 
  $user=$auth->current();if(!$user)JsonResponse::error('Authentication required.',401);
  $manualDates=array_values(array_filter(array_map('trim',explode(',',Env::get('MANUAL_EDITABLE_DATES','')))));
- $service=new MoneyService(new MoneyRepository($db),new DatePolicy($timezone,null,$manualDates),$user['id']);
+ $service=new MoneyService(new MoneyRepository($db),new DatePolicy($timezone,null,$manualDates,$user['activationDate']),$user['id'],$user['activationDate']);
 
  if($method==='GET'&&preg_match('#^/months/(\d{4}-\d{2})$#',$path,$m))JsonResponse::success($service->month($m[1]));
  if($method==='GET'&&preg_match('#^/days/(\d{4}-\d{2}-\d{2})$#',$path,$m))JsonResponse::success($service->day($m[1]));
