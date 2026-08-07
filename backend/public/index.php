@@ -30,11 +30,14 @@ header('X-Content-Type-Options: nosniff');header('Referrer-Policy: no-referrer')
 if(($_SERVER['REQUEST_METHOD']??'GET')==='OPTIONS'){header('Access-Control-Allow-Methods: GET, POST, PATCH, DELETE, OPTIONS');header('Access-Control-Allow-Headers: Content-Type, X-CSRF-Token, Idempotency-Key');http_response_code(204);exit;}
 
 $secure=Env::get('APP_ENV','development')==='production';
+$sessionLifetime=max(86400,(int)Env::get('APP_SESSION_LIFETIME_SECONDS','7776000'));
 session_name(Env::get('APP_SESSION_NAME','adam_money_session'));
-session_set_cookie_params(['lifetime'=>0,'path'=>'/','secure'=>$secure,'httponly'=>true,'samesite'=>'Strict']);
-ini_set('session.use_strict_mode','1');session_start();
+session_set_cookie_params(['lifetime'=>$sessionLifetime,'path'=>'/','secure'=>$secure,'httponly'=>true,'samesite'=>'Strict']);
+ini_set('session.use_strict_mode','1');
+ini_set('session.gc_maxlifetime',(string)$sessionLifetime);
+session_start();
 $now=time();
-if(isset($_SESSION['created_at'])&&($now-(int)$_SESSION['created_at'])>43200||isset($_SESSION['last_seen'])&&($now-(int)$_SESSION['last_seen'])>1800){$_SESSION=[];session_regenerate_id(true);}
+if(isset($_SESSION['last_seen'])&&($now-(int)$_SESSION['last_seen'])>$sessionLifetime){$_SESSION=[];session_regenerate_id(true);}
 $_SESSION['created_at']??=$now;$_SESSION['last_seen']=$now;
 
 $db=Connection::create();$authRepo=new AuthRepository($db);$auth=new AuthService($authRepo,50);

@@ -18,6 +18,7 @@ APP_ORIGIN=https://adam-daily-dirham.alwaysdata.net
 APP_ORIGINS=https://adam-daily-dirham.alwaysdata.net
 APP_TIMEZONE=Africa/Casablanca
 APP_SESSION_NAME=daily_dirham_session
+APP_SESSION_LIFETIME_SECONDS=7776000
 DB_HOST=mysql-adam-daily-dirham.alwaysdata.net
 DB_PORT=3306
 DB_SSL_REQUIRED=false

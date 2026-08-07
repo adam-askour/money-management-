@@ -8,6 +8,7 @@ export function BudgetEditor({ data, month, onClose, onSaved }) {
  const effectiveFrom=data.budget.goalEffectiveFrom||`${month}-01`;
  const [form,setForm]=useState({dailyBudget:'',monthlyBudget:'',effectiveFrom}),[errors,setErrors]=useState({}),[busy,setBusy]=useState(false);
  useEffect(()=>setForm({dailyBudget:data.budget.dailyBudgetCentimes==null?'':(data.budget.dailyBudgetCentimes/100).toFixed(2),monthlyBudget:data.budget.monthlyBudgetCentimes==null?'':(data.budget.monthlyBudgetCentimes/100).toFixed(2),effectiveFrom}),[data,month,effectiveFrom]);
+ useEffect(()=>{const closeOnEscape=e=>{if(e.key==='Escape')onClose();};document.addEventListener('keydown',closeOnEscape);return()=>document.removeEventListener('keydown',closeOnEscape);},[onClose]);
  const prorated=data.budget.proratedFirstMonth&&form.monthlyBudget!==''&&!Number.isNaN(Number(form.monthlyBudget))?(Number(form.monthlyBudget)*data.budget.remainingDays/data.budget.daysInMonth).toFixed(2):null;
  const submit=async e=>{e.preventDefault();setBusy(true);setErrors({});try{await api.updateBudget(form);await onSaved();onClose();}catch(err){setErrors(err.fields||{form:err.message});}finally{setBusy(false);}};
  const title=isFirstSetup?'Set your first goals':isNewMonth?'New month, new goals':'Edit your budget';

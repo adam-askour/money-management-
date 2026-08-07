@@ -102,6 +102,8 @@ State-changing requests require JSON, a valid session CSRF header, and ownership
 
 ## Security notes
 
+Authenticated browser sessions persist for 90 days by default and are renewed while active. Configure the duration with `APP_SESSION_LIFETIME_SECONDS`; explicit sign-out still destroys the server-side session and its cookie.
+
 All value-bearing SQL uses prepared statements with native emulation disabled. Mutation payloads use an explicit field allow-list; amounts, lengths, precision, date formats, ownership, and lock state are checked server-side. React renders descriptions as text and never uses unsafe HTML injection. Sessions are HttpOnly, SameSite Strict, and Secure in production. The API restricts CORS, hides production exceptions, logs details server-side, validates MIME type and JSON depth/size, rate-limits sessions, uses create idempotency keys, and sets CSP/frame, MIME, referrer, permissions, resource, and cache headers. Secrets are ignored by Git.
 
 For a real multi-user release, add login with `password_hash()`/`password_verify()`, regenerate the session ID after authentication, rotate CSRF tokens, add a persistent IP+account-aware rate limiter, and configure CSP/security headers on the frontend host as well.

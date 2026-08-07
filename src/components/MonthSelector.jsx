@@ -24,6 +24,13 @@ export function MonthSelector({ value, onChange }) {
     return () => { document.removeEventListener('pointerdown', outside); document.removeEventListener('keydown', escape); };
   }, []);
 
+  useEffect(() => {
+    if (!open) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, [open]);
+
   return <div className="month-picker" ref={root}>
     <button type="button" className="month-trigger" onClick={() => setOpen(current => !current)} aria-haspopup="listbox" aria-expanded={open}>
       {selected.compact}<ChevronDown size={14} aria-hidden="true" />
