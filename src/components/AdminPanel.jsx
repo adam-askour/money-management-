@@ -1,4 +1,4 @@
-import { Copy, Link, Trash2, X } from 'lucide-react';
+import { Check, Copy, Link, Trash2, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { api } from '../services/api';
 
@@ -7,6 +7,7 @@ export function AdminPanel({ onClose, notify }) {
   const [form, setForm] = useState({ name: '', email: '' });
   const [errors, setErrors] = useState({});
   const [link, setLink] = useState('');
+  const [copied, setCopied] = useState(false);
   const load = useCallback(() => api.admin().then(setData).catch(error => setErrors({ form: error.message })), []);
 
   useEffect(() => { load(); }, [load]);
@@ -26,7 +27,16 @@ export function AdminPanel({ onClose, notify }) {
       await load();
     } catch (error) { setErrors(error.fields || { form: error.message }); }
   };
-  const copy = async () => { await navigator.clipboard.writeText(link); notify('Invitation link copied.'); };
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+      notify('Invitation link copied.');
+      window.setTimeout(() => setCopied(false), 2800);
+    } catch {
+      setErrors({ form: 'The invitation link could not be copied. Please copy it manually.' });
+    }
+  };
   const removeUser = async user => {
     if (!window.confirm(`Delete ${user.name}'s account and all of its data?`)) return;
     try { await api.deleteUser(user.id); await load(); notify('User deleted.'); }
@@ -60,7 +70,7 @@ export function AdminPanel({ onClose, notify }) {
         <button className="primary-btn"><Link size={16}/>Create invite</button>
       </form>
       {Object.values(errors).map(error => <span className="field-error" key={error}>{error}</span>)}
-      {link && <div className="invite-link"><code>{link}</code><button type="button" className="icon-btn" onClick={copy}><Copy size={16}/></button></div>}
+      {link && <div className="invite-link"><code>{link}</code><div className="copy-control">{copied && <span className="copy-confirmation" role="status"><Check size={14}/>Link copied</span>}<button type="button" className="icon-btn" onClick={copy} aria-label="Copy invitation link">{copied?<Check size={16}/>:<Copy size={16}/>}</button></div></div>}
       <div className="admin-list">{data?.users.map(user => <article key={user.id}><div><strong>{user.name}</strong><small>{user.email} · {user.role}</small></div>{user.id !== data.currentUserId && <button type="button" className="icon-btn danger" onClick={() => removeUser(user)} aria-label={`Delete ${user.name}`}><Trash2 size={16}/></button>}</article>)}</div>
       <h3>Pending invitations</h3>
       <div className="admin-list">{data?.invitations.map(invitation => <article key={invitation.id}><div><strong>{invitation.name}</strong><small>{invitation.email} · Pending</small></div><button type="button" className="icon-btn danger" onClick={() => removeInvite(invitation)} aria-label={`Delete invitation for ${invitation.email}`}><Trash2 size={16}/></button></article>)}</div>

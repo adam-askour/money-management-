@@ -132,3 +132,13 @@ main{max-width:1440px;margin:auto;padding:0 32px}.overview{min-height:calc(100vh
 .modal-layer{z-index:100}
 .modal-layer>.admin-modal{transform:translateX(-52px)}
 @media(max-width:900px){.modal-layer>.admin-modal{transform:none}}
+
+/* Copy confirmation uses the same gold pill treatment as the global toast. */
+.copy-control{position:relative;flex:0 0 auto}
+.copy-confirmation{position:absolute;right:0;bottom:calc(100% + 9px);display:flex;align-items:center;gap:6px;white-space:nowrap;background:var(--gold);color:var(--char);border-radius:999px;padding:9px 13px;font-size:11px;font-weight:700;box-shadow:0 10px 28px rgba(0,0,0,.3);animation:copy-pop .18s ease-out}
+.copy-confirmation:after{content:'';position:absolute;right:14px;top:100%;border:5px solid transparent;border-top-color:var(--gold)}
+@keyframes copy-pop{from{opacity:0;transform:translateY(5px) scale(.96)}to{opacity:1;transform:none}}
+
+/* Flexible budget-cycle editor */
+.budget-period-grid{display:grid;grid-template-columns:1.4fr .8fr;gap:10px}.budget-period-grid label{margin:0}.cycle-range,.budget-suggestion{display:flex;align-items:flex-start;gap:8px;padding:11px 13px;border-radius:6px;background:rgba(89,168,255,.1);border:1px solid rgba(89,168,255,.32);color:var(--cream)!important;line-height:1.45}.cycle-range svg{flex:0 0 auto;margin-top:1px;color:var(--gold)}.cycle-range strong,.budget-suggestion strong{color:var(--gold)}.budget-warning{display:grid;gap:10px;padding:14px;border:1px solid rgba(255,112,112,.62);border-radius:7px;background:rgba(255,112,112,.08);color:var(--cream);font-size:12px;line-height:1.45}.budget-warning p{margin:0}.budget-warning__title{display:flex;align-items:center;gap:8px;color:var(--red);font-size:13px}.budget-warning__title svg{flex:0 0 auto}.budget-warning__rows{display:grid;border-top:1px solid rgba(255,112,112,.25)}.budget-warning__rows span{display:flex;justify-content:space-between;gap:18px;padding:8px 0;border-bottom:1px solid rgba(255,112,112,.25);color:var(--muted)}.budget-warning__rows strong{color:var(--cream);white-space:nowrap}.budget-warning__action{color:var(--red);font-weight:700}
+@media(max-width:520px){.budget-period-grid{grid-template-columns:1fr}}

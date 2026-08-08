@@ -20,6 +20,8 @@ $hasRole=(bool)$db->query("SELECT COUNT(*) FROM information_schema.columns WHERE
 if(!$hasRole){executeSqlFile($db,dirname(__DIR__).'/database/migration_002_auth_budgets.sql');echo "Authentication and budget migration applied.\n";}
 $hasActivatedAt=(bool)$db->query("SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='users' AND column_name='activated_at'")->fetchColumn();
 if(!$hasActivatedAt){executeSqlFile($db,dirname(__DIR__).'/database/migration_003_activation_dates.sql');echo "Account activation dates migration applied.\n";}
+$hasBudgetPeriod=(bool)$db->query("SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='budgets' AND column_name='period_days'")->fetchColumn();
+if(!$hasBudgetPeriod){executeSqlFile($db,dirname(__DIR__).'/database/migration_004_budget_cycles.sql');echo "Budget cycle migration applied.\n";}
 
 $pending=(int)$db->query("SELECT COUNT(*) FROM invitations WHERE role='admin' AND accepted_at IS NULL AND revoked_at IS NULL AND expires_at>NOW()")->fetchColumn();
 $activated=(int)$db->query("SELECT COUNT(*) FROM users WHERE role='admin' AND password_hash IS NOT NULL")->fetchColumn();

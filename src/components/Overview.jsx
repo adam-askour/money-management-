@@ -37,8 +37,8 @@ export function Overview({ summary, serverToday, monthName, userName }) {
     </motion.section>
     <div className="stats-grid">
       <Stat icon={CalendarDays} label="Spent this month" value={formatDH(summary.totalSpentCentimes)} />
-      <Stat icon={Target} label="Monthly target" value={summary.monthlyTargetCentimes==null?'Not set':formatDH(summary.monthlyTargetCentimes)} />
-      <Stat icon={ArrowDownRight} label="Budget remaining" value={summary.remainingCentimes==null?'Not set':formatDH(summary.remainingCentimes)} />
+      <Stat icon={Target} label="Period budget" value={summary.monthlyTargetCentimes==null?'Not set':formatDH(summary.monthlyTargetCentimes)} />
+      <Stat icon={ArrowDownRight} label="Period remaining" value={summary.remainingCentimes==null?'Not set':formatDH(summary.remainingCentimes)} />
       <Stat icon={Gauge} label="Average / recorded day" value={formatDH(summary.averageRecordedCentimes)} />
     </div>
     <div className="count-row" aria-label="Monthly day counts">
