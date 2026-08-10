@@ -14,8 +14,8 @@ export function Ledger({ days, monthName, onOpen }) {
         <span className="day-number">{String(index + 1).padStart(2, '0')}</span>
         <span className="day-date"><strong>{day.weekday}</strong><small>{day.displayDate}</small></span>
         <span className="day-expenses">{day.recorded ? <><ReceiptText size={15}/>{day.expenseCount} {day.expenseCount === 1 ? 'expense' : 'expenses'}{day.preview?.length ? ` · ${day.preview.join(', ')}` : ''}</> : 'No expenses recorded'}</span>
-        <span className="day-total">{day.recorded ? formatDH(day.totalCentimes) : '—'}</span>
-        <span className="day-difference">{day.recorded&&day.differenceCentimes!=null ? formatDH(day.differenceCentimes, true) : '—'}</span>
+        <span className="day-total">{day.differenceCentimes != null || day.recorded ? formatDH(day.totalCentimes) : '—'}</span>
+        <span className="day-difference">{day.differenceCentimes!=null ? formatDH(day.differenceCentimes, true) : '—'}</span>
         <span className="day-status"><StatusBadge type={day.budgetState}>{day.budgetMessage}</StatusBadge><StatusBadge type={day.editState === 'upcoming' ? 'upcoming' : day.editable ? 'under' : 'locked'} subtle>{day.editLabel}</StatusBadge></span>
         <ChevronRight className="row-arrow" aria-hidden="true"/>
       </motion.button>)}

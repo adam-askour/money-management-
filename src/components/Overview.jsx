@@ -19,15 +19,15 @@ export function Overview({ summary, serverToday, monthName, userName }) {
     </div>
     <motion.div className="orbit" initial={reduced ? false : { opacity: 0, scale: .88, rotate: -8 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ duration: .75, ease: [.19, 1, .22, 1] }}><InteractiveCoin /></motion.div>
     <div className="today-strip">
-      <Stat icon={ReceiptText} label="Today" value={summary.today.recorded ? formatDH(summary.today.totalCentimes) : 'Not recorded'} />
+      <Stat icon={ReceiptText} label="Today" value={formatDH(summary.today.totalCentimes)} />
       <Stat icon={Target} label="Daily goal" value={summary.dailyBudgetCentimes==null?'Not set':formatDH(summary.dailyBudgetCentimes)} />
-      <Stat icon={Gauge} label="Difference" value={summary.today.recorded&&summary.today.differenceCentimes!=null ? formatDH(summary.today.differenceCentimes, true) : '—'} tone={summary.today.state}/>
+      <Stat icon={Gauge} label="Difference" value={summary.today.differenceCentimes!=null ? formatDH(summary.today.differenceCentimes, true) : '—'} tone={summary.today.state}/>
     </div>
     <motion.section className="budget-balance" aria-labelledby="budget-balance-title" initial={reduced ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
       <div className="budget-balance__intro">
         <span className="eyebrow">Automatic calculation</span>
         <h2 id="budget-balance-title">Your budget balance.</h2>
-        <p>Calculated from the days where you recorded expenses in {monthName}.</p>
+        <p>Calculated from recorded days and closed zero-expense days in {monthName}.</p>
       </div>
       <div className="budget-balance__figures">
         <div className="balance-figure balance-figure--saved"><PiggyBank aria-hidden="true"/><span>You saved</span><strong>{formatDH(summary.totalSavedCentimes)}</strong></div>
@@ -42,7 +42,7 @@ export function Overview({ summary, serverToday, monthName, userName }) {
       <Stat icon={Gauge} label="Average / recorded day" value={formatDH(summary.averageRecordedCentimes)} />
     </div>
     <div className="count-row" aria-label="Monthly day counts">
-      <span><b>{summary.daysUnder}</b> under budget</span><span><b>{summary.daysOn}</b> on budget</span><span><b>{summary.daysOver}</b> over budget</span><span><b>{summary.daysEmpty}</b> not recorded</span>
+      <span><b>{summary.daysUnder}</b> under budget</span><span><b>{summary.daysOn}</b> on budget</span><span><b>{summary.daysOver}</b> over budget</span><span><b>{summary.daysEmpty}</b> not counted yet</span>
     </div>
   </section>;
 }
