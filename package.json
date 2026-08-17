@@ -4,9 +4,10 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "node scripts/dev-preview.mjs",
+    "dev:frontend": "vite",
     "build": "vite build",
-    "preview": "vite preview",
+    "preview": "node scripts/dev-preview.mjs --preview",
     "test": "vitest run",
     "test:watch": "vitest"
   },
