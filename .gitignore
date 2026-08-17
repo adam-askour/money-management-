@@ -1,7 +1,33 @@
 node_modules/
 dist/
-.env
-backend/.env
+
+# Local environment files and credentials (examples remain publishable)
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa
+id_ed25519
+id_ecdsa
+*credentials*.json
+*service-account*.json
+.deploy-secrets/
+
+# Local databases, dumps, logs, and handoff notes
+*.sqlite
+*.sqlite3
+*.db
+*.sql.gz
+*.bak
+*.log
+NEXT_SESSION.md
+
 backend/storage/*.log
 backend/storage/*.ini
 backend/storage/mysql-data/
@@ -16,6 +42,5 @@ vite-error.log
 *-diagnostic.png
 chrome-runtime.log
 .phpunit.cache/
-.deploy-secrets/
 coin-preview.png
 coin-5dh-preview.png

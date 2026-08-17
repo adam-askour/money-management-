@@ -1,2 +1,0 @@
-[0816/100925.641:ERROR:third_party\crashpad\crashpad\util\win\registration_protocol_win.cc:108] CreateFile: Accès refusé. (0x5)
-[0816/102401.663:ERROR:third_party\crashpad\crashpad\util\win\registration_protocol_win.cc:108] CreateFile: Accès refusé. (0x5)
